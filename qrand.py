@@ -11,7 +11,7 @@ class QRNG():
     def generate_binary_array(self, length, showsteps):
         #Initialize Qubit Array
         qubits = cirq.NamedQubit.range(length, prefix="qnum_")
-        #Randomization using the Hadamard Gate: https://www.quantum-inspire.com/kbase/hadamard/. 1/sqrt(2)
+        #Randomization using the Hadamard Gate
         hadamard_gate = [cirq.H(qubit) for qubit in qubits]
         #Measure Results
         measurement_gate = cirq.measure(qubits, key = "qrng_measure")
@@ -24,5 +24,5 @@ class QRNG():
                 print(f'Step: {step}, State:{i.state_vector()}' )
         #Simulate Quantum Env
         result = simulator.simulate(qrng_circuit)
-        #print(result.measurements['qrng_measure'].tostring())
+        print(result.measurements['qrng_measure'].tostring())
         return result.measurements['qrng_measure'].tostring()

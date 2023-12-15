@@ -26,6 +26,15 @@ class QuantumAES(object):
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
         plain_text = cipher.decrypt(encrypted_text[self.block_size:]).decode("utf-8")
         return self.__unpad(plain_text)
+    def decrypt_with_seed(self, encrypted_text, seed):
+        encrypted_text = b64decode(encrypted_text)
+        iv = encrypted_text[:self.block_size]
+        try:
+            cipher = AES.new(hashlib.sha256(seed.encode()).digest(), AES.MODE_CBC, iv)
+            plain_text = cipher.decrypt(encrypted_text[self.block_size:]).decode("utf-8")
+            return self.__unpad(plain_text)
+        except:
+            print("Unable to decypt, key does not match")
 
     def __pad(self, plain_text):
         number_of_bytes_to_pad = self.block_size - len(plain_text) % self.block_size
@@ -44,9 +53,12 @@ class QuantumAES(object):
 Quantum_Number = QRNG()
 #Create encryption object with QRN as the Key
 QuantumAESObject = QuantumAES(str(Quantum_Number.generate_binary_array(10, True)))
+enc_text = QuantumAESObject.encrypt(input("Enter Text To Encrypt: "))
+print(QuantumAESObject.decrypt_with_seed(enc_text, input("Enter Decryption Key: ")))
 
-try:
+'''try:
     #Encrypt and Immeadiately Decrypt Text
     print(QuantumAESObject.decrypt(QuantumAESObject.encrypt(input("Enter Text To Encrypt: "))))
 except:
     print("Unable to Decrypt")
+    '''
